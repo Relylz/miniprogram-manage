@@ -12,6 +12,7 @@ const userRouter = require("./routers/usercenter");
 const commentsRouter = require("./routers/comments");
 const addressRouter = require("./routers/address");
 const orderRouter = require("./routers/order");
+const imgRouter = require("./routers/img");
 
 // const fs = require("fs");
 // const http = require("http");
@@ -27,7 +28,7 @@ app.get("/", (req, res) => {
 });
 app.get("/image/girl", (req, res) => {
   const imagePath = path.join(__dirname, "./img/123.jpg");
-  console.log("已收到美女图片请求");
+  console.log(req.url, "已收到美女图片请求");
 
   res.sendFile(imagePath);
 });
@@ -46,12 +47,31 @@ app.use("/usercenter", userRouter);
 app.use("/comments", commentsRouter);
 app.use("/address", addressRouter);
 app.use("/order", orderRouter);
-
-// app.post("/upload", upload.single("image"), (req, res) => {
-//   console.log(req.file);
-//   res.send("File uploaded successfully!");
-// });
+app.use("/img", imgRouter);
 
 app.listen(3000, () => {
   console.log("Example app listening on port 3000!");
+});
+// 添加以下代码，启用gzip压缩
+const compression = require("compression");
+app.use(compression());
+
+// 添加以下代码，启用静态文件服务
+app.use(express.static(path.join(__dirname, "public")));
+
+// 添加以下代码，处理404错误
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+  next(error);
+});
+
+// 添加以下代码，处理500错误
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
 });
