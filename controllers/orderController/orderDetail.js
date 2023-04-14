@@ -18,6 +18,7 @@ function mockFetchOrderDetail(params) {
 
 const getOrderDetail = (req, res) => {
   const params = req.body.orderparams;
+  console.log("订单详细数据");
   res.send(mockFetchOrderDetail(params));
 };
 /** 获取客服mock数据 */
